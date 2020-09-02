@@ -4,6 +4,7 @@ import com.charles.billing_service.models.Biller;
 import com.charles.billing_service.models.Bills;
 import com.charles.billing_service.models.InquiryRequest;
 import com.charles.billing_service.models.InquiryResponse;
+import com.charles.billing_service.repository.InquiryResponseRepository;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ public class BillingServiceController {
     public static final String POSTPAID = "postpaid";
     @Autowired
     private RestTemplate restTemplate;
+    @Autowired
+    private InquiryResponseRepository inquiryResponseRepository;
 
     @GetMapping("/biller/{billerId}")
     @ApiOperation(value = "Find Biller by billerId",
@@ -55,18 +58,18 @@ public class BillingServiceController {
                         "http://billing-pdam-client/api/inquiry/",
                         inquiryRequest,
                         InquiryResponse.class);
-            break;
+                break;
             case POSTPAID:
                 response = restTemplate.postForObject(
                         "http://billing-postpaid-client/api/inquiry/",
                         inquiryRequest,
                         InquiryResponse.class);
-            break;
+                break;
             default:
                 break;
         }
         response.setInquiryId(UUID.randomUUID());
-
-        return response;
+        inquiryResponseRepository.save(response);
+        return inquiryResponseRepository.findById(response.getInquiryId().toString());
     }
 }
