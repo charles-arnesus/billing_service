@@ -1,9 +1,6 @@
 package com.charles.billing_service.controllers;
 
-import com.charles.billing_service.models.Biller;
-import com.charles.billing_service.models.Bills;
-import com.charles.billing_service.models.InquiryRequest;
-import com.charles.billing_service.models.InquiryResponse;
+import com.charles.billing_service.models.*;
 import com.charles.billing_service.repository.InquiryResponseRepository;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -71,5 +68,41 @@ public class BillingServiceController {
         response.setInquiryId(UUID.randomUUID());
         inquiryResponseRepository.save(response);
         return inquiryResponseRepository.findById(response.getInquiryId().toString());
+    }
+
+    @PostMapping("/pay")
+    public PaymentResponse doPayment(@RequestBody String inquiryId) throws Throwable {
+        try{
+            InquiryResponse inquiryResponse = inquiryResponseRepository.findById(inquiryId);
+            final String billerId = inquiryResponse.getBillerId();
+            final Biller biller = getBiller(billerId);
+            final String billerCategory = biller.getCategory();
+            final String customerAccountId = inquiryResponse.getCustomerAccountId();
+            final Double totalAmount = inquiryResponse.getTotalAmount();
+            PaymentRequest paymentRequest = new PaymentRequest();
+            paymentRequest.setBillerId(billerId);
+            paymentRequest.setCustomerAccountId(customerAccountId);
+            paymentRequest.setTotalAmount(totalAmount);
+            PaymentResponse response = new PaymentResponse();
+            switch (billerCategory) {
+                case PDAM:
+                    response = restTemplate.postForObject(
+                            "http://billing-pdam-client/api/pay/",
+                            paymentRequest,
+                            PaymentResponse.class);
+                    break;
+                case POSTPAID:
+                    response = restTemplate.postForObject(
+                            "http://billing-postpaid-client/api/pay/",
+                            paymentRequest,
+                            PaymentResponse.class);
+                    break;
+                default:
+                    break;
+            }
+            return response;
+        } catch (Exception e) {
+            throw e.getCause();
+        }
     }
 }
