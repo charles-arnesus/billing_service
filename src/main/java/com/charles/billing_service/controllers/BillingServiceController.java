@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 @RestController
@@ -64,17 +65,21 @@ public class BillingServiceController {
 
     @PostMapping("/pay")
     public PaymentResponse doPayment(@RequestBody String inquiryId) throws Throwable {
-        try{
+        try {
             InquiryResponse inquiryResponse = inquiryResponseRepository.findById(inquiryId);
             final String billerId = inquiryResponse.getBillerId();
             final Biller biller = billerRepository.findByBillerId(billerId);
             final String billerCategory = biller.getCategory();
             final String customerAccountId = inquiryResponse.getCustomerAccountId();
             final Double totalAmount = inquiryResponse.getTotalAmount();
+            final LocalDate dueDate = inquiryResponse.getDueDate();
+
             PaymentRequest paymentRequest = new PaymentRequest();
             paymentRequest.setBillerId(billerId);
             paymentRequest.setCustomerAccountId(customerAccountId);
             paymentRequest.setTotalAmount(totalAmount);
+            paymentRequest.setDueDate(dueDate);
+
             PaymentResponse response = new PaymentResponse();
             switch (billerCategory) {
                 case PDAM:
