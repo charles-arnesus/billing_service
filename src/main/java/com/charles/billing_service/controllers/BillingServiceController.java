@@ -36,6 +36,15 @@ public class BillingServiceController {
         return restTemplate.getForObject("http://billing-history-service/api/history/" + userId, Bills.class);
     }
 
+    public Bill addBillHistory(PaymentResponse paymentResponse){
+        Bill bill = new Bill();
+        bill = restTemplate.postForObject(
+                "http://billing-history-service/api/history/",
+                paymentResponse,
+                Bill.class);
+        return bill;
+    }
+
     @PostMapping("/inquiry")
     public InquiryResponse doInquiry(@RequestBody InquiryRequest inquiryRequest) {
         final String billerId = inquiryRequest.getBillerId();
@@ -64,7 +73,7 @@ public class BillingServiceController {
     }
 
     @PostMapping("/pay")
-    public PaymentResponse doPayment(@RequestBody String inquiryId) throws Throwable {
+    public Bill doPayment(@RequestBody String inquiryId) throws Throwable {
         try {
             InquiryResponse inquiryResponse = inquiryResponseRepository.findById(inquiryId);
             final String billerId = inquiryResponse.getBillerId();
@@ -97,7 +106,8 @@ public class BillingServiceController {
                 default:
                     break;
             }
-            return response;
+            Bill bill = addBillHistory(response);
+            return bill;
         } catch (Exception e) {
             throw e.getCause();
         }

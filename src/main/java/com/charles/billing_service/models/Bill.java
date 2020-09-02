@@ -3,6 +3,7 @@ package com.charles.billing_service.models;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @ApiModel(description = "Details about the bill")
@@ -21,6 +22,8 @@ public class Bill {
     private LocalDateTime createdDateTime;
     @ApiModelProperty(notes = "The date and time bill updated")
     private LocalDateTime updatedDateTime;
+    @ApiModelProperty(notes = "The date and time bill updated")
+    private LocalDate paymentDate;
 
     public Bill() {
 
@@ -32,7 +35,8 @@ public class Bill {
                 String status,
                 Double totalAmount,
                 LocalDateTime createdDateTime,
-                LocalDateTime updatedDateTime) {
+                LocalDateTime updatedDateTime,
+                LocalDate paymentDate) {
         this.orderId = orderId;
         this.userId = userId;
         this.billerId = billerId;
@@ -40,6 +44,7 @@ public class Bill {
         this.totalAmount = totalAmount;
         this.createdDateTime = createdDateTime;
         this.updatedDateTime = updatedDateTime;
+        this.paymentDate = paymentDate;
     }
 
     public String getOrderId() {
@@ -96,5 +101,13 @@ public class Bill {
 
     public void setUpdatedDateTime(LocalDateTime updatedDateTime) {
         this.updatedDateTime = updatedDateTime;
+    }
+
+    public LocalDate getPaymentDate() {
+        return paymentDate;
+    }
+
+    public void setPaymentDate(LocalDate paymentDate) {
+        this.paymentDate = paymentDate;
     }
 }
