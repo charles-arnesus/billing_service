@@ -37,6 +37,6 @@ public class BillingServiceController {
             @ApiParam(value = "ID value for the payment history that need to be retrieved", required = true)
             @PathVariable("userId")
                     String userId) {
-        return restTemplate.getForObject("http://localhost:8082/api/history/" + userId, Bills.class);
+        return restTemplate.getForObject("http://billing-history-service/api/history/" + userId, Bills.class);
     }
 }
