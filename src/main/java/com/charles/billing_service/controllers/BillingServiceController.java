@@ -1,6 +1,7 @@
 package com.charles.billing_service.controllers;
 
 import com.charles.billing_service.models.*;
+import com.charles.billing_service.repository.BillerRepository;
 import com.charles.billing_service.repository.InquiryResponseRepository;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -20,17 +21,8 @@ public class BillingServiceController {
     private RestTemplate restTemplate;
     @Autowired
     private InquiryResponseRepository inquiryResponseRepository;
-
-    @GetMapping("/biller/{billerId}")
-    @ApiOperation(value = "Find Biller by billerId",
-            notes = "Provide a billerId to look up specific biller",
-            response = Biller.class)
-    public Biller getBiller(
-            @ApiParam(value = "ID value for the biller that need to be retrieved", required = true)
-            @PathVariable("billerId")
-                    String billerId) {
-        return new Biller("halo", "Halo", "postpaid");
-    }
+    @Autowired
+    private BillerRepository billerRepository;
 
     @GetMapping("/history/{userId}")
     @ApiOperation(value = "Retrieve all payment history by userId",
@@ -46,7 +38,7 @@ public class BillingServiceController {
     @PostMapping("/inquiry")
     public InquiryResponse doInquiry(@RequestBody InquiryRequest inquiryRequest) {
         final String billerId = inquiryRequest.getBillerId();
-        final Biller biller = getBiller(billerId);
+        final Biller biller = billerRepository.findByBillerId(billerId);
         final String billerCategory = biller.getCategory();
         InquiryResponse response = new InquiryResponse();
         switch (billerCategory) {
@@ -75,7 +67,7 @@ public class BillingServiceController {
         try{
             InquiryResponse inquiryResponse = inquiryResponseRepository.findById(inquiryId);
             final String billerId = inquiryResponse.getBillerId();
-            final Biller biller = getBiller(billerId);
+            final Biller biller = billerRepository.findByBillerId(billerId);
             final String billerCategory = biller.getCategory();
             final String customerAccountId = inquiryResponse.getCustomerAccountId();
             final Double totalAmount = inquiryResponse.getTotalAmount();
