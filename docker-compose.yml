@@ -1,6 +1,89 @@
 version: '2'
 services:
+  billing-discovery-server:
+    container_name: billing-discovery-server
+    build:
+      context: https://github.com/charles-arnesus/billing_discovery_server.git
+      dockerfile: ./Dockerfile
+    ports:
+      - 8761:8761
+    networks:
+      - webnet
+    restart: always
+  billing-pdam-client:
+    container_name: billing-pdam-client
+    build:
+      context: https://github.com/charles-arnesus/billing_pdam_client.git
+      dockerfile: ./Dockerfile
+    ports:
+      - 8083:8083
+    depends_on:
+      - db
+      - billing-discovery-server
+      - rd
+    links:
+      - db
+      - billing-discovery-server
+      - rd
+    restart: always
+    networks:
+      - webnet
+  billing-postpaid-client:
+    container_name: billing-postpaid-client
+    build:
+      context: https://github.com/charles-arnesus/billing_postpaid_client.git
+      dockerfile: ./Dockerfile
+    ports:
+      - 8084:8084
+    depends_on:
+      - db
+      - billing-discovery-server
+      - rd
+    links:
+      - db
+      - billing-discovery-server
+      - rd
+    restart: always
+    networks:
+      - webnet
+  billing-history-service:
+    container_name: billing-history-service
+    build:
+      context: https://github.com/charles-arnesus/billing_history_service.git
+      dockerfile: ./Dockerfile
+    ports:
+      - 8082:8082
+    depends_on:
+      - db
+      - billing-discovery-server
+      - rd
+    links:
+      - db
+      - billing-discovery-server
+      - rd
+    restart: always
+    networks:
+      - webnet
+  billing-service:
+    container_name: billing-service
+    build:
+      context: https://github.com/charles-arnesus/billing_service.git
+      dockerfile: ./Dockerfile
+    ports:
+      - 8081:8081
+    depends_on:
+      - db
+      - billing-discovery-server
+      - rd
+    links:
+      - db
+      - billing-discovery-server
+      - rd
+    restart: always
+    networks:
+      - webnet
   db:
+    container_name: db
     image: postgres:10.0-alpine
     ports:
       - "5432:5432"
@@ -8,7 +91,16 @@ services:
       - POSTGRES_DB=devdb
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    networks:
+      - webnet
+    restart: always
   rd:
+    container_name: rd
     image: redis:4.0.1-alpine
     ports:
       - "6379:6379"
+    networks:
+      - webnet
+    restart: always
+networks:
+  webnet:
