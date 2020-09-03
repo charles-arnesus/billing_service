@@ -57,7 +57,7 @@ public class BillingServiceApplication {
 
     @Bean
     JedisConnectionFactory jedisConnectionFactory() {
-        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration("localhost", 6379);
+        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration("rd", 6379);
         return new JedisConnectionFactory(redisStandaloneConfiguration);
     }
 
