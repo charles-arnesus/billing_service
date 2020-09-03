@@ -25,9 +25,4 @@ public class BillerController {
         return billerRepository.findByBillerId(billerId);
     }
 
-    @PostMapping("/")
-    public Biller addBiller(@RequestBody Biller biller){
-        return billerRepository.save(biller);
-    }
-
 }

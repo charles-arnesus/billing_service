@@ -41,6 +41,8 @@ public class BillingServiceController {
     }
 
     @PostMapping("/inquiry")
+    @ApiOperation(value = "Do inquiry for biller",
+            response = InquiryResponse.class)
     public InquiryResponse doInquiry(@RequestBody InquiryRequest inquiryRequest) {
         final String billerId = inquiryRequest.getBillerId();
         final Biller biller = billerRepository.findByBillerId(billerId);
@@ -68,6 +70,8 @@ public class BillingServiceController {
     }
 
     @PostMapping("/pay")
+    @ApiOperation(value = "Do payment for biller",
+            response = Bill.class)
     public Bill doPayment(@RequestBody String inquiryId) throws Throwable {
         try {
             InquiryResponse inquiryResponse = inquiryResponseRepository.findById(inquiryId);

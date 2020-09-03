@@ -1,15 +1,24 @@
 package com.charles.billing_service.models;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
 
+@ApiModel(description = "Model for inquiry response")
 public class InquiryResponse implements Serializable {
+    @ApiModelProperty(notes = "The unique id of the inquiry")
     public UUID inquiryId;
+    @ApiModelProperty(notes = "The unique id of the biller")
     public String billerId;
+    @ApiModelProperty(notes = "The customer account id")
     public String customerAccountId;
+    @ApiModelProperty(notes = "The total amount of the bill")
     public Double totalAmount;
+    @ApiModelProperty(notes = "The due date of the bill")
     public LocalDate dueDate;
 
     public InquiryResponse() {

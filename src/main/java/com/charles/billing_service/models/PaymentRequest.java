@@ -1,11 +1,19 @@
 package com.charles.billing_service.models;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
 import java.time.LocalDate;
 
+@ApiModel(description = "Model for payment request")
 public class PaymentRequest {
+    @ApiModelProperty(notes = "The unique id of the biller")
     public String billerId;
+    @ApiModelProperty(notes = "The customer account id")
     public String customerAccountId;
+    @ApiModelProperty(notes = "The total amount of the bill")
     public Double totalAmount;
+    @ApiModelProperty(notes = "The due date of the bill")
     private LocalDate dueDate;
 
     public PaymentRequest() {
