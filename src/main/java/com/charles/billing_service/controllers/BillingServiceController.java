@@ -4,7 +4,6 @@ import com.charles.billing_service.models.*;
 import com.charles.billing_service.repository.BillerRepository;
 import com.charles.billing_service.repository.InquiryResponseRepository;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -25,18 +24,14 @@ public class BillingServiceController {
     @Autowired
     private BillerRepository billerRepository;
 
-    @GetMapping("/history/{userId}")
-    @ApiOperation(value = "Retrieve all payment history by userId",
-            notes = "Provide a userId to retrieve all payment history",
+    @GetMapping("/history")
+    @ApiOperation(value = "Retrieve all payment history",
             response = Bills.class)
-    public Bills getAllBillHistory(
-            @ApiParam(value = "ID value for the payment history that need to be retrieved", required = true)
-            @PathVariable("userId")
-                    String userId) {
-        return restTemplate.getForObject("http://billing-history-service/api/history/" + userId, Bills.class);
+    public Bills getAllBillHistory() {
+        return restTemplate.getForObject("http://billing-history-service/api/history/", Bills.class);
     }
 
-    public Bill addBillHistory(PaymentResponse paymentResponse){
+    public Bill addBillHistory(PaymentResponse paymentResponse) {
         Bill bill = new Bill();
         bill = restTemplate.postForObject(
                 "http://billing-history-service/api/history/",
